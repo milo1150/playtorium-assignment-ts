@@ -5,14 +5,14 @@ const MAX_DISCOUNT_BY_POINT = 20 // Percentage
 export type ItemCategory = 'Clothing' | 'Accessories' | 'Electronics'
 export type CartItem = { name: string; price: number; category: ItemCategory }
 
-export const CART_ITEMS: ReadonlyArray<CartItem> = [
+export const CART_ITEMS: Array<CartItem> = [
   { name: 'T-Shirt', price: 350, category: 'Clothing' },
   { name: 'Hat', price: 250, category: 'Clothing' },
   { name: 'Hoodie', price: 700, category: 'Clothing' },
   { name: 'Watch', price: 850, category: 'Electronics' },
   { name: 'Bag', price: 640, category: 'Accessories' },
   { name: 'Belt', price: 230, category: 'Accessories' },
-]
+] as const
 
 export function sumDefaultCartTotalPrice(items: CartItem[]): number {
   return _.sumBy(items, 'price')
@@ -31,7 +31,7 @@ export function calculatePercentageDiscount(
 /**
  * @param discountAmount - Percentage value.
  */
-function getDiscountedCartItemValue(
+export function getDiscountedCartItemValue(
   item: CartItem,
   discountAmount: number
 ): number {
