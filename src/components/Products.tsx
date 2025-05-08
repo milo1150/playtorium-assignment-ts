@@ -3,9 +3,11 @@
 import { Button, Card, List, Row } from 'antd'
 import { CART_ITEMS } from '../utils/cart'
 import { PlusCircleOutlined } from '@ant-design/icons'
+import { useCartStore } from '../store/cart'
 
 export const Products: React.FC = () => {
-  const data = CART_ITEMS
+  const data = [...CART_ITEMS]
+  const cartStore = useCartStore((state) => state)
 
   return (
     <List
@@ -26,7 +28,11 @@ export const Products: React.FC = () => {
                 <p>Category: {item.category}</p>
               </section>
               <section>
-                <Button type="primary" icon={<PlusCircleOutlined />}>
+                <Button
+                  type="primary"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => cartStore.add(item)}
+                >
                   Add
                 </Button>
               </section>

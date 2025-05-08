@@ -3,15 +3,21 @@ import _ from 'lodash'
 const MAX_DISCOUNT_BY_POINT = 20 // Percentage
 
 export type ItemCategory = 'Clothing' | 'Accessories' | 'Electronics'
-export type CartItem = { name: string; price: number; category: ItemCategory }
+export type CartItem = {
+  id: number
+  name: string
+  price: number
+  category: ItemCategory
+  amount: number
+}
 
 export const CART_ITEMS: Array<CartItem> = [
-  { name: 'T-Shirt', price: 350, category: 'Clothing' },
-  { name: 'Hat', price: 250, category: 'Clothing' },
-  { name: 'Hoodie', price: 700, category: 'Clothing' },
-  { name: 'Watch', price: 850, category: 'Electronics' },
-  { name: 'Bag', price: 640, category: 'Accessories' },
-  { name: 'Belt', price: 230, category: 'Accessories' },
+  { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+  { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
+  { id: 3, name: 'Hoodie', price: 700, category: 'Clothing', amount: 1 },
+  { id: 4, name: 'Watch', price: 850, category: 'Electronics', amount: 1 },
+  { id: 5, name: 'Bag', price: 640, category: 'Accessories', amount: 1 },
+  { id: 6, name: 'Belt', price: 230, category: 'Accessories', amount: 1 },
 ] as const
 
 export function sumDefaultCartTotalPrice(items: CartItem[]): number {
@@ -19,38 +25,38 @@ export function sumDefaultCartTotalPrice(items: CartItem[]): number {
 }
 
 /**
- * @param discountAmount - Percentage value.
+ * @param discount - Percentage value.
  */
 export function calculatePercentageDiscount(
   totalPrice: number,
-  discountAmount: number
+  discount: number
 ): number {
-  return (discountAmount / 100) * totalPrice
+  return (discount / 100) * totalPrice
 }
 
 /**
- * @param discountAmount - Percentage value.
+ * @param discount - Percentage value.
  */
 export function getDiscountedCartItemValue(
   item: CartItem,
-  discountAmount: number
+  discount: number
 ): number {
-  return item.price - (discountAmount / 100) * item.price
+  return item.price - (discount / 100) * item.price
 }
 
 /**
- * @param discountAmount - Percentage value.
+ * @param discount - Percentage value.
  */
 export function discountByItemCategory(
   category: ItemCategory,
-  discountAmount: number,
+  discount: number,
   items: CartItem[]
 ): number {
   const result = _.chain(items)
     .cloneDeep()
     .map((cartItem) =>
       cartItem.category === category
-        ? getDiscountedCartItemValue(cartItem, discountAmount)
+        ? getDiscountedCartItemValue(cartItem, discount)
         : cartItem.price
     )
     .sum()
@@ -59,7 +65,7 @@ export function discountByItemCategory(
 }
 
 /**
- * @param discountAmount - Percentage value.
+ * @param discount - Percentage value.
  */
 export function discountByPoints(totalPrice: number, points: number): number {
   const maxDiscount = (MAX_DISCOUNT_BY_POINT / 100) * totalPrice

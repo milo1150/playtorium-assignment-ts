@@ -1,8 +1,11 @@
 'use client'
 
-import { Card, Divider, Row } from 'antd'
+import { Button, Card, Divider, Row } from 'antd'
+import { useCartStore } from '../store/cart'
 
 export const Summary: React.FC = () => {
+  const cartStore = useCartStore((state) => state)
+
   return (
     <Card>
       <p className="text-xl font-extrabold">Summary</p>
@@ -26,6 +29,15 @@ export const Summary: React.FC = () => {
         <p className="text-lg font-light">Total:</p>
         <p className="text-lg font-bold">300 THB</p>
       </Row>
+
+      {/* TODO: delete */}
+      <Button
+        onClick={() => {
+          console.log(cartStore.items)
+        }}
+      >
+        Check state
+      </Button>
     </Card>
   )
 }

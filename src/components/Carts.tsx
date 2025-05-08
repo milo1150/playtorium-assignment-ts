@@ -1,16 +1,16 @@
 'use client'
 
 import { Button, Card, List, Row } from 'antd'
-import { CART_ITEMS } from '../utils/cart'
 import { MinusCircleOutlined } from '@ant-design/icons'
+import { useCartStore } from '../store/cart'
 
 export const Carts: React.FC = () => {
-  const data = CART_ITEMS
+  const cartStore = useCartStore((state) => state)
 
   return (
     <List
       grid={{ gutter: 16, column: 1 }}
-      dataSource={data}
+      dataSource={cartStore.items}
       className="border-none"
       bordered={false}
       renderItem={(item) => (
@@ -19,6 +19,7 @@ export const Carts: React.FC = () => {
             <Row className="w-full justify-between items-center">
               <section>
                 <p className="font-extrabold text-lg">{item.name}</p>
+                <p>Amount: {item.amount}</p>
                 <p>
                   Price:{' '}
                   <span className="font-extrabold">{item.price} THB</span>
@@ -30,6 +31,7 @@ export const Carts: React.FC = () => {
                   icon={<MinusCircleOutlined />}
                   color="danger"
                   variant="outlined"
+                  onClick={() => cartStore.delete(item)}
                 >
                   Remove
                 </Button>
