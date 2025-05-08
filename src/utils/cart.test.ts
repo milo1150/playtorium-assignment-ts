@@ -13,8 +13,8 @@ import {
 describe('Assignment test cases', () => {
   test('Percentage discount', () => {
     const items: CartItem[] = [
-      { name: 'T-Shirt', price: 350, category: 'Clothing' },
-      { name: 'Hat', price: 250, category: 'Clothing' },
+      { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+      { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
     ]
     const totalPrice = sumDefaultCartTotalPrice(items)
     const discountPercentage = 10
@@ -27,10 +27,10 @@ describe('Assignment test cases', () => {
     const category: ItemCategory = 'Clothing'
     const discount = 15
     const items: CartItem[] = [
-      { name: 'T-Shirt', price: 350, category: 'Clothing' },
-      { name: 'Hoodie', price: 700, category: 'Clothing' },
-      { name: 'Watch', price: 850, category: 'Electronics' },
-      { name: 'Bag', price: 640, category: 'Accessories' },
+      { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+      { id: 2, name: 'Hoodie', price: 700, category: 'Clothing', amount: 1 },
+      { id: 3, name: 'Watch', price: 850, category: 'Electronics', amount: 1 },
+      { id: 4, name: 'Bag', price: 640, category: 'Accessories', amount: 1 },
     ]
     const result = discountByItemCategory(category, discount, items)
     expect(result).toEqual(2382.5)
@@ -38,9 +38,9 @@ describe('Assignment test cases', () => {
 
   test('Discount by points', () => {
     const sum = sumDefaultCartTotalPrice([
-      { name: 'T-Shirt', price: 350, category: 'Clothing' },
-      { name: 'Hat', price: 250, category: 'Clothing' },
-      { name: 'Belt', price: 230, category: 'Accessories' },
+      { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+      { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
+      { id: 3, name: 'Belt', price: 230, category: 'Accessories', amount: 1 },
     ])
     const points = 68
     const result = discountByPoints(sum, points)
@@ -49,9 +49,9 @@ describe('Assignment test cases', () => {
 
   test('Special campaigns', () => {
     const sum = sumDefaultCartTotalPrice([
-      { name: 'T-Shirt', price: 350, category: 'Clothing' },
-      { name: 'Hat', price: 250, category: 'Clothing' },
-      { name: 'Belt', price: 230, category: 'Accessories' },
+      { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+      { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
+      { id: 3, name: 'Belt', price: 230, category: 'Accessories', amount: 1 },
     ])
     const threshold = 300
     const discount = 40
@@ -65,8 +65,8 @@ describe('Custom test cases', () => {
 
   test('should correctly sum total cart price', () => {
     const sum = sumDefaultCartTotalPrice([
-      { name: 'T-Shirt', price: 350, category: 'Clothing' },
-      { name: 'Hat', price: 250, category: 'Clothing' },
+      { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
+      { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
     ])
     expect(sum).toBe(600)
   })
