@@ -9,7 +9,7 @@ npm install
 Run test
 
 ```bash
-npm run test
+npm run test:run
 ```
 
 Run the development server:
