@@ -27,7 +27,7 @@ export const Summary: React.FC = () => {
 
       <Row className="justify-between items-center">
         <p className="text-lg font-light">Total:</p>
-        <p className="text-lg font-bold">{cartStore.totalPrice()} THB</p>
+        <p className="text-lg font-bold">{cartStore.getTotalPrice()} THB</p>
       </Row>
 
       {/* TODO: delete */}

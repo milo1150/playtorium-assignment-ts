@@ -2,7 +2,6 @@ import _ from 'lodash'
 import { CartItem, ItemCategory } from '../types/cart'
 
 const MAX_DISCOUNT_BY_POINT = 20 // Percentage
-
 export const CART_ITEMS: Array<CartItem> = [
   { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
   { id: 2, name: 'Hat', price: 250, category: 'Clothing', amount: 1 },
@@ -18,6 +17,7 @@ export function sumDefaultCartTotalPrice(items: CartItem[]): number {
 
 /**
  * @param discount - Percentage value.
+ * @return discount price only.
  */
 export function calculatePercentageDiscount(
   totalPrice: number,
@@ -27,8 +27,16 @@ export function calculatePercentageDiscount(
 }
 
 /**
- * @param discount - Percentage value.
+ * @param discount - The discount percentage to apply.
+ * @return The total price after the discount is applied.
  */
+export function applyPercentageDiscount(
+  totalPrice: number,
+  discount: number
+): number {
+  return totalPrice - calculatePercentageDiscount(totalPrice, discount)
+}
+
 export function getDiscountedCartItemValue(
   item: CartItem,
   discount: number
@@ -38,6 +46,7 @@ export function getDiscountedCartItemValue(
 
 /**
  * @param discount - Percentage value.
+ * @return The total price after the discount is applied.
  */
 export function discountByItemCategory(
   category: ItemCategory,
@@ -58,9 +67,42 @@ export function discountByItemCategory(
 
 /**
  * @param discount - Percentage value.
+ * @return discount price only.
+ */
+export function calculateDiscountedCartItemValue(
+  item: CartItem,
+  discount: number
+): number {
+  return (discount / 100) * item.price
+}
+
+/**
+ * @param discount - Percentage value.
+ * @return discount price only.
+ */
+export function calculateDiscountByItemCategory(
+  category: ItemCategory,
+  discount: number,
+  items: CartItem[]
+): number {
+  const result: number[] = []
+  items.forEach(
+    (cartItem) =>
+      cartItem.category === category &&
+      result.push(calculateDiscountedCartItemValue(cartItem, discount))
+  )
+  return _.sum(result)
+}
+
+export function calculateMaxDiscountByPoints(totalPrice: number): number {
+  return (MAX_DISCOUNT_BY_POINT / 100) * totalPrice
+}
+
+/**
+ * @return The total price after the discount is applied.
  */
 export function discountByPoints(totalPrice: number, points: number): number {
-  const maxDiscount = (MAX_DISCOUNT_BY_POINT / 100) * totalPrice
+  const maxDiscount = calculateMaxDiscountByPoints(totalPrice)
   const result =
     points >= maxDiscount ? totalPrice - maxDiscount : totalPrice - points
   return result
@@ -68,13 +110,40 @@ export function discountByPoints(totalPrice: number, points: number): number {
 
 /**
  * @param threshold - Every X THB for Discount Y THB.
+ */
+export function calculateSpecialCampaignsMaxDiscountsApplicable(
+  totalPrice: number,
+  threshold: number
+): number {
+  return _.floor(totalPrice / threshold)
+}
+
+/**
+ * @param threshold - Every X THB for Discount Y THB.
  * @param discount - THB value.
+ * @return discount price only.
+ */
+export function calculateDiscountBySpecialCampaigns(
+  totalPrice: number,
+  threshold: number,
+  discount: number
+): number {
+  const maxDiscountsApplicable =
+    calculateSpecialCampaignsMaxDiscountsApplicable(totalPrice, threshold)
+  return maxDiscountsApplicable * discount
+}
+
+/**
+ * @param threshold - Every X THB for Discount Y THB.
+ * @param discount - THB value.
+ * @return The total price after the discount is applied.
  */
 export function discountBySpecialCampaigns(
   totalPrice: number,
   threshold: number,
   discount: number
 ): number {
-  const maxDiscountsApplicable = _.floor(totalPrice / threshold)
+  const maxDiscountsApplicable =
+    calculateSpecialCampaignsMaxDiscountsApplicable(totalPrice, threshold)
   return totalPrice - maxDiscountsApplicable * discount
 }

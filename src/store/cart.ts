@@ -1,5 +1,12 @@
 import { create } from 'zustand'
-import { CART_ITEMS, sumDefaultCartTotalPrice } from '../utils/cart'
+import {
+  CART_ITEMS,
+  calculateDiscountByItemCategory,
+  calculateDiscountBySpecialCampaigns,
+  calculateMaxDiscountByPoints,
+  calculatePercentageDiscount,
+  sumDefaultCartTotalPrice,
+} from '../utils/cart'
 import _ from 'lodash'
 import { CartItem, Discount } from '../types/cart'
 
@@ -13,7 +20,7 @@ export type CartAction = {
   count: () => number
   add: (item: CartItem) => void
   delete: (item: CartItem) => void
-  totalPrice: () => number
+  getTotalPrice: () => number
   setDiscountFixedAmount: (args: Discount['fixedAmount']) => void
   setDiscountPercentage: (args: Discount['percentage']) => void
   setDiscountPercentageDiscountByItemCategory: (
@@ -105,8 +112,6 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
     })
   },
 
-  totalPrice: () => sumDefaultCartTotalPrice(get().items),
-
   setDiscountFixedAmount: (args) => {
     set((state) => {
       const newState = _.cloneDeep(state)
@@ -145,5 +150,61 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
       newState.discount.specialCampaigns = { ...args }
       return newState
     })
+  },
+
+  getTotalPrice: () => {
+    let totalPrice: number = sumDefaultCartTotalPrice(get().items)
+
+    // Fixed amount (Coupon)
+    if (get().discount.fixedAmount.checked) {
+      totalPrice -= get().discount.fixedAmount.amount
+    }
+
+    // Percentage discount (Coupon)
+    if (get().discount.percentage.checked) {
+      const discount = calculatePercentageDiscount(
+        totalPrice,
+        get().discount.percentage.percent
+      )
+      totalPrice -= discount
+    }
+
+    // Percentage discount by item category (Ontop)
+    if (get().discount.percentageDiscountByItemCategory.checked) {
+      const args = get().discount.percentageDiscountByItemCategory
+      const totalDiscountPrices = calculateDiscountByItemCategory(
+        args.category,
+        args.amount,
+        get().items
+      )
+      totalPrice -= totalDiscountPrices
+    }
+
+    // Discount by points (Ontop)
+    if (get().discount.byPoints.checked) {
+      const maxDiscountValue = calculateMaxDiscountByPoints(totalPrice)
+      const discountByPoints = _.min([
+        get().discount.byPoints.points,
+        maxDiscountValue,
+      ]) as number
+      totalPrice -= discountByPoints
+    }
+
+    // Special campaigns (Seasonal)
+    const specialCampaigns = get().discount.specialCampaigns
+    if (
+      specialCampaigns.checked &&
+      specialCampaigns.every > 0 && // prevent NaN
+      specialCampaigns.discount > 0 // prevent NaN
+    ) {
+      const specialDiscount = calculateDiscountBySpecialCampaigns(
+        totalPrice,
+        specialCampaigns.every,
+        specialCampaigns.discount
+      )
+      totalPrice -= specialDiscount
+    }
+
+    return totalPrice
   },
 }))

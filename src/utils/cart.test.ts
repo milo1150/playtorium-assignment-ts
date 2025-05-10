@@ -6,6 +6,11 @@ import {
   discountBySpecialCampaigns,
   CART_ITEMS,
   calculatePercentageDiscount,
+  applyPercentageDiscount,
+  calculateDiscountByItemCategory,
+  calculateDiscountedCartItemValue,
+  calculateMaxDiscountByPoints,
+  calculateSpecialCampaignsMaxDiscountsApplicable,
 } from '@/src/utils/cart' // update this path as needed
 import { CartItem, ItemCategory } from '../types/cart'
 
@@ -110,5 +115,53 @@ describe('Custom test cases', () => {
     const total = 200
     const discounted = discountBySpecialCampaigns(total, 300, 50)
     expect(discounted).toBe(200)
+  })
+})
+
+describe('Custom test cases (V2)', () => {
+  test('applyPercentageDiscount should subtract correct discount', () => {
+    const total = 1000
+    const discount = 10
+    const result = applyPercentageDiscount(total, discount)
+    expect(result).toBe(900)
+  })
+
+  test('calculateDiscountedCartItemValue should return correct discount value', () => {
+    const item: CartItem = {
+      id: 1,
+      name: 'T-Shirt',
+      price: 500,
+      category: 'Clothing',
+      amount: 1,
+    }
+    const discount = 20
+    const result = calculateDiscountedCartItemValue(item, discount)
+    expect(result).toBe(100)
+  })
+
+  test('calculateDiscountByItemCategory should sum correct discount for matching category', () => {
+    const items: CartItem[] = [
+      { id: 1, name: 'T-Shirt', price: 300, category: 'Clothing', amount: 1 },
+      {
+        id: 2,
+        name: 'Laptop',
+        price: 2000,
+        category: 'Electronics',
+        amount: 1,
+      },
+      { id: 3, name: 'Hat', price: 200, category: 'Clothing', amount: 1 },
+    ]
+    const result = calculateDiscountByItemCategory('Clothing', 10, items)
+    expect(result).toBe(50) // 10% of (300 + 200)
+  })
+
+  test('calculateMaxDiscountByPoints should return 20% of total', () => {
+    const result = calculateMaxDiscountByPoints(1000)
+    expect(result).toBe(200)
+  })
+
+  test('calculateSpecialCampaignsMaxDiscountsApplicable should floor total/threshold', () => {
+    const result = calculateSpecialCampaignsMaxDiscountsApplicable(1050, 200)
+    expect(result).toBe(5) // floor(1050 / 200)
   })
 })
