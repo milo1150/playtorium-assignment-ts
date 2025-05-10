@@ -3,10 +3,28 @@
 import { Card, Checkbox, Divider, InputNumber, Row, Select } from 'antd'
 import { useCartStore } from '../store/cart'
 import { ItemCategoryDropdown } from '../types/cart'
+import { useMemo } from 'react'
 
 export const Discount: React.FC = () => {
   const cartStore = useCartStore((state) => state)
   const discount = useCartStore((state) => state.discount)
+
+  const disabledFixedAmount = useMemo<boolean>(
+    () => discount.percentage.checked,
+    [discount.percentage.checked]
+  )
+  const disabledPercentage = useMemo<boolean>(
+    () => discount.fixedAmount.checked,
+    [discount.fixedAmount.checked]
+  )
+  const disabledPercentageDiscountByItemCategory = useMemo<boolean>(
+    () => discount.byPoints.checked,
+    [discount.byPoints.checked]
+  )
+  const disabledByPoints = useMemo<boolean>(
+    () => discount.percentageDiscountByItemCategory.checked,
+    [discount.percentageDiscountByItemCategory.checked]
+  )
 
   return (
     <Card>
@@ -23,6 +41,7 @@ export const Discount: React.FC = () => {
             })
           }}
           checked={discount.fixedAmount.checked}
+          disabled={disabledFixedAmount}
         >
           Fixed amount (Coupon)
         </Checkbox>
@@ -38,6 +57,7 @@ export const Discount: React.FC = () => {
               amount: v || 0,
             })
           }}
+          disabled={disabledFixedAmount}
         />
       </div>
 
@@ -51,6 +71,7 @@ export const Discount: React.FC = () => {
               percent: discount.percentage.percent,
             })
           }}
+          disabled={disabledPercentage}
         >
           Percentage discount (Coupon)
         </Checkbox>
@@ -67,6 +88,7 @@ export const Discount: React.FC = () => {
               percent: v || 0,
             })
           }}
+          disabled={disabledPercentage}
         />
       </div>
 
@@ -81,6 +103,7 @@ export const Discount: React.FC = () => {
               category: discount.percentageDiscountByItemCategory.category,
             })
           }}
+          disabled={disabledPercentageDiscountByItemCategory}
         >
           Percentage discount by item category (Ontop)
         </Checkbox>
@@ -102,6 +125,7 @@ export const Discount: React.FC = () => {
                 category: category,
               })
             }}
+            disabled={disabledPercentageDiscountByItemCategory}
           />
           <InputNumber
             addonBefore="Discount"
@@ -117,6 +141,7 @@ export const Discount: React.FC = () => {
                 category: discount.percentageDiscountByItemCategory.category,
               })
             }}
+            disabled={disabledPercentageDiscountByItemCategory}
           />
         </Row>
       </div>
@@ -131,6 +156,7 @@ export const Discount: React.FC = () => {
               points: discount.byPoints.points,
             })
           }}
+          disabled={disabledByPoints}
         >
           Discount by points (Ontop)
         </Checkbox>
@@ -146,6 +172,7 @@ export const Discount: React.FC = () => {
                 points: v || 0,
               })
             }}
+            disabled={disabledByPoints}
           />
         </div>
       </div>
