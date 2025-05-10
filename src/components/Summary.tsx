@@ -27,13 +27,13 @@ export const Summary: React.FC = () => {
 
       <Row className="justify-between items-center">
         <p className="text-lg font-light">Total:</p>
-        <p className="text-lg font-bold">300 THB</p>
+        <p className="text-lg font-bold">{cartStore.totalPrice()} THB</p>
       </Row>
 
       {/* TODO: delete */}
       <Button
         onClick={() => {
-          console.log(cartStore.items)
+          console.log(cartStore)
         }}
       >
         Check state

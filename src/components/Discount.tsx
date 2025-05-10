@@ -1,26 +1,57 @@
 'use client'
 
 import { Card, Checkbox, Divider, InputNumber, Row, Select } from 'antd'
+import { useCartStore } from '../store/cart'
+import { ItemCategoryDropdown } from '../types/cart'
 
 export const Discount: React.FC = () => {
+  const cartStore = useCartStore((state) => state)
+  const discount = useCartStore((state) => state.discount)
+
   return (
     <Card>
       <p className="text-xl font-extrabold">Discount</p>
       <Divider className="my-2!" />
 
       <div className="py-1!">
-        <Checkbox className="pb-1!" onChange={() => {}}>
+        <Checkbox
+          className="pb-1!"
+          onChange={(e) => {
+            cartStore.setDiscountFixedAmount({
+              checked: e.target.checked,
+              amount: discount.fixedAmount.amount,
+            })
+          }}
+          checked={discount.fixedAmount.checked}
+        >
           Fixed amount (Coupon)
         </Checkbox>
         <InputNumber
           addonAfter="THB"
           placeholder="amount"
           className="mt-2 w-full!"
+          min={0}
+          value={discount.fixedAmount.amount}
+          onChange={(v) => {
+            cartStore.setDiscountFixedAmount({
+              checked: discount.fixedAmount.checked,
+              amount: v || 0,
+            })
+          }}
         />
       </div>
 
       <div className="py-1!">
-        <Checkbox className="pb-1!" onChange={() => {}}>
+        <Checkbox
+          className="pb-1!"
+          checked={discount.percentage.checked}
+          onChange={(e) => {
+            cartStore.setDiscountPercentage({
+              checked: e.target.checked,
+              percent: discount.percentage.percent,
+            })
+          }}
+        >
           Percentage discount (Coupon)
         </Checkbox>
         <InputNumber
@@ -29,52 +60,139 @@ export const Discount: React.FC = () => {
           className="mt-2 w-full!"
           max={100}
           min={0}
+          value={discount.percentage.percent}
+          onChange={(v) => {
+            cartStore.setDiscountPercentage({
+              checked: discount.percentage.checked,
+              percent: v || 0,
+            })
+          }}
         />
       </div>
 
       <div className="py-1!">
-        <Checkbox className="pb-1!" onChange={() => {}}>
+        <Checkbox
+          className="pb-1!"
+          checked={discount.percentageDiscountByItemCategory.checked}
+          onChange={(e) => {
+            cartStore.setDiscountPercentageDiscountByItemCategory({
+              checked: e.target.checked,
+              amount: discount.percentageDiscountByItemCategory.amount,
+              category: discount.percentageDiscountByItemCategory.category,
+            })
+          }}
+        >
           Percentage discount by item category (Ontop)
         </Checkbox>
         <Row className="gap-1 mt-2">
           <Select
             className="w-[49%]!"
-            defaultValue="lucy"
-            onChange={() => {}}
-            options={[
-              { value: 'jack', label: 'Jack' },
-              { value: 'lucy', label: 'Lucy' },
-              { value: 'Yiminghe', label: 'yiminghe' },
-              { value: 'disabled', label: 'Disabled', disabled: true },
-            ]}
+            value={discount.percentageDiscountByItemCategory.category}
+            options={
+              [
+                { value: 'Accessories', label: 'Accessories' },
+                { value: 'Clothing', label: 'Clothing' },
+                { value: 'Electronics', label: 'Electronics' },
+              ] as ItemCategoryDropdown[]
+            }
+            onChange={(category) => {
+              cartStore.setDiscountPercentageDiscountByItemCategory({
+                checked: discount.percentageDiscountByItemCategory.checked,
+                amount: discount.percentageDiscountByItemCategory.amount,
+                category: category,
+              })
+            }}
           />
-          <InputNumber placeholder="amount" className="w-[49%]!" />
+          <InputNumber
+            addonBefore="Discount"
+            addonAfter="%"
+            min={0}
+            max={100}
+            className="w-[49%]!"
+            value={discount.percentageDiscountByItemCategory.amount}
+            onChange={(v) => {
+              cartStore.setDiscountPercentageDiscountByItemCategory({
+                checked: discount.percentageDiscountByItemCategory.checked,
+                amount: v || 0,
+                category: discount.percentageDiscountByItemCategory.category,
+              })
+            }}
+          />
         </Row>
       </div>
 
       <div className="py-1!">
-        <Checkbox className="pb-1!" onChange={() => {}}>
+        <Checkbox
+          className="pb-1!"
+          checked={discount.byPoints.checked}
+          onChange={(e) => {
+            cartStore.setDiscountByPoint({
+              checked: e.target.checked,
+              points: discount.byPoints.points,
+            })
+          }}
+        >
           Discount by points (Ontop)
         </Checkbox>
         <div>
-          <InputNumber placeholder="points" className="mt-2 w-full!" />
+          <InputNumber
+            addonAfter="Points"
+            className="mt-2 w-full!"
+            min={0}
+            value={discount.byPoints.points}
+            onChange={(v) => {
+              cartStore.setDiscountByPoint({
+                checked: discount.byPoints.checked,
+                points: v || 0,
+              })
+            }}
+          />
         </div>
       </div>
 
       <div className="py-1!">
-        <Checkbox className="pb-1!" onChange={() => {}}>
+        <Checkbox
+          className="pb-1!"
+          checked={discount.specialCampaigns.checked}
+          onChange={(e) => {
+            cartStore.setDiscountSpecialCampaigns({
+              checked: e.target.checked,
+              every: discount.specialCampaigns.every,
+              discount: discount.specialCampaigns.discount,
+            })
+          }}
+        >
           Special campaigns (Seasonal)
         </Checkbox>
         <Row className="gap-1 mt-2">
           <InputNumber
+            addonBefore="Every"
             addonAfter="THB"
             placeholder="Every"
             className="w-[49%]!"
+            min={0}
+            value={discount.specialCampaigns.every}
+            onChange={(v) => {
+              cartStore.setDiscountSpecialCampaigns({
+                checked: discount.specialCampaigns.checked,
+                every: v || 0,
+                discount: discount.specialCampaigns.discount,
+              })
+            }}
           />
           <InputNumber
+            addonBefore="Discount"
             addonAfter="THB"
-            placeholder="Discount"
             className="w-[49%]!"
+            min={0}
+            value={discount.specialCampaigns.discount}
+            onChange={(v) => {
+              cartStore.setDiscountSpecialCampaigns({
+                checked: discount.specialCampaigns.checked,
+                every: discount.specialCampaigns.every,
+                discount: v || 0,
+              })
+            }}
           />
         </Row>
       </div>

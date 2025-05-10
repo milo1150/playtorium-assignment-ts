@@ -1,15 +1,7 @@
 import _ from 'lodash'
+import { CartItem, ItemCategory } from '../types/cart'
 
 const MAX_DISCOUNT_BY_POINT = 20 // Percentage
-
-export type ItemCategory = 'Clothing' | 'Accessories' | 'Electronics'
-export type CartItem = {
-  id: number
-  name: string
-  price: number
-  category: ItemCategory
-  amount: number
-}
 
 export const CART_ITEMS: Array<CartItem> = [
   { id: 1, name: 'T-Shirt', price: 350, category: 'Clothing', amount: 1 },
