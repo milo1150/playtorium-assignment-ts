@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Card, Divider, Row } from 'antd'
+import { Card, Divider, Row } from 'antd'
 import { useCartStore } from '../store/cart'
 
 export const Summary: React.FC = () => {
@@ -12,16 +12,22 @@ export const Summary: React.FC = () => {
       <Divider className="my-2!" />
 
       <Row className="justify-between items-center">
-        <p className="text-lg font-light">Coupon:</p>
-        <p className="text-lg font-bold">-200 THB</p>
+        <p className="text-lg font-light">Coupon discount:</p>
+        <p className="text-lg font-bold">
+          {cartStore.getTotalCouponDiscount()} THB
+        </p>
       </Row>
       <Row className="justify-between items-center">
-        <p className="text-lg font-light">Ontop:</p>
-        <p className="text-lg font-bold">-200 THB</p>
+        <p className="text-lg font-light">Ontop discount:</p>
+        <p className="text-lg font-bold">
+          {cartStore.getTotalOntopDiscount()} THB
+        </p>
       </Row>
       <Row className="justify-between items-center">
-        <p className="text-lg font-light">Special:</p>
-        <p className="text-lg font-bold">-300 THB</p>
+        <p className="text-lg font-light">Special discount:</p>
+        <p className="text-lg font-bold">
+          {cartStore.getTotalSpecialDiscount()} THB
+        </p>
       </Row>
       <Divider className="my-2!" />
 
@@ -29,15 +35,6 @@ export const Summary: React.FC = () => {
         <p className="text-lg font-light">Total:</p>
         <p className="text-lg font-bold">{cartStore.getTotalPrice()} THB</p>
       </Row>
-
-      {/* TODO: delete */}
-      <Button
-        onClick={() => {
-          console.log(cartStore)
-        }}
-      >
-        Check state
-      </Button>
     </Card>
   )
 }

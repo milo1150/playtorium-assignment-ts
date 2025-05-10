@@ -20,7 +20,6 @@ export type CartAction = {
   count: () => number
   add: (item: CartItem) => void
   delete: (item: CartItem) => void
-  getTotalPrice: () => number
   setDiscountFixedAmount: (args: Discount['fixedAmount']) => void
   setDiscountPercentage: (args: Discount['percentage']) => void
   setDiscountPercentageDiscountByItemCategory: (
@@ -28,6 +27,11 @@ export type CartAction = {
   ) => void
   setDiscountByPoint: (args: Discount['byPoints']) => void
   setDiscountSpecialCampaigns: (args: Discount['specialCampaigns']) => void
+  getTotalPrice: () => number
+  getTotalCouponDiscount: () => number
+  getTotalOntopDiscount: () => number
+  getTotalSpecialDiscount: () => number
+  getMaxPoints: () => number
 }
 
 const initCart: CartState = {
@@ -152,12 +156,12 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
     })
   },
 
-  getTotalPrice: () => {
-    let totalPrice: number = sumDefaultCartTotalPrice(get().items)
+  getTotalCouponDiscount: () => {
+    const totalPrice: number = sumDefaultCartTotalPrice(get().items)
 
     // Fixed amount (Coupon)
     if (get().discount.fixedAmount.checked) {
-      totalPrice -= get().discount.fixedAmount.amount
+      return get().discount.fixedAmount.amount
     }
 
     // Percentage discount (Coupon)
@@ -166,8 +170,19 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
         totalPrice,
         get().discount.percentage.percent
       )
-      totalPrice -= discount
+      return discount
     }
+
+    return 0
+  },
+
+  getMaxPoints: () => {
+    const totalPrice: number = sumDefaultCartTotalPrice(get().items)
+    return calculateMaxDiscountByPoints(totalPrice)
+  },
+
+  getTotalOntopDiscount: () => {
+    const totalPrice: number = sumDefaultCartTotalPrice(get().items)
 
     // Percentage discount by item category (Ontop)
     if (get().discount.percentageDiscountByItemCategory.checked) {
@@ -177,7 +192,7 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
         args.amount,
         get().items
       )
-      totalPrice -= totalDiscountPrices
+      return totalDiscountPrices
     }
 
     // Discount by points (Ontop)
@@ -187,8 +202,14 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
         get().discount.byPoints.points,
         maxDiscountValue,
       ]) as number
-      totalPrice -= discountByPoints
+      return discountByPoints
     }
+
+    return 0
+  },
+
+  getTotalSpecialDiscount: () => {
+    const totalPrice: number = sumDefaultCartTotalPrice(get().items)
 
     // Special campaigns (Seasonal)
     const specialCampaigns = get().discount.specialCampaigns
@@ -202,8 +223,23 @@ export const useCartStore = create<CartState & CartAction>()((set, get) => ({
         specialCampaigns.every,
         specialCampaigns.discount
       )
-      totalPrice -= specialDiscount
+      return specialDiscount
     }
+
+    return 0
+  },
+
+  getTotalPrice: () => {
+    let totalPrice: number = sumDefaultCartTotalPrice(get().items)
+
+    // (Coupon) Fixed amount & Percentage discount
+    totalPrice -= get().getTotalCouponDiscount()
+
+    // (Ontop) Percentage discount by item category & Discount by points
+    totalPrice -= get().getTotalOntopDiscount()
+
+    // (Seasonal) Special campaigns
+    totalPrice -= get().getTotalSpecialDiscount()
 
     return totalPrice
   },

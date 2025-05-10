@@ -26,6 +26,10 @@ export const Discount: React.FC = () => {
     [discount.percentageDiscountByItemCategory.checked]
   )
 
+  const maxPoints = useMemo<number>(() => {
+    return discount.byPoints.checked ? cartStore.getMaxPoints() : 0
+  }, [cartStore, discount.byPoints.checked])
+
   return (
     <Card>
       <p className="text-xl font-extrabold">Discount</p>
@@ -158,13 +162,19 @@ export const Discount: React.FC = () => {
           }}
           disabled={disabledByPoints}
         >
-          Discount by points (Ontop)
+          Discount by points (Ontop){' '}
+          {maxPoints ? (
+            <span className="text-red-500">(max: {maxPoints})</span>
+          ) : (
+            ''
+          )}
         </Checkbox>
         <div>
           <InputNumber
             addonAfter="Points"
             className="mt-2 w-full!"
             min={0}
+            // max={maxPoints}
             value={discount.byPoints.points}
             onChange={(v) => {
               cartStore.setDiscountByPoint({
