@@ -11,7 +11,7 @@ const { Title } = Typography
 export const MainPage: React.FC = () => {
   return (
     <div className="w-2/3">
-      <Title className="text-white!">Cart</Title>
+      <Title className="text-white!"></Title>
       <Row gutter={12}>
         <Col span={8}>
           <Products />
