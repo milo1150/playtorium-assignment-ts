@@ -5,10 +5,9 @@ import {
   discountByPoints,
   discountBySpecialCampaigns,
   CART_ITEMS,
-  ItemCategory,
-  CartItem,
   calculatePercentageDiscount,
 } from '@/src/utils/cart' // update this path as needed
+import { CartItem, ItemCategory } from '../types/cart'
 
 describe('Assignment test cases', () => {
   test('Percentage discount', () => {
